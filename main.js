@@ -1,36 +1,60 @@
-Webcam.set({
-    width:350,
-    height:300,
-    image_format:'png',
-    png_quality:90
-})
-camera = document.getElementById("camera");
-Webcam.attach("#camera");
+score_left_wrist = 0
+song1_status = ""
+song2_status = ""
+Peter_pan_song = "";
+Harry_potter_theme_song = "";
+rightWrist_x = 0;
+rightWrist_y = 0;
+leftWrist_x = 0;
+leftWrist_y = 0;
 
-function take_snapshot() {
-    Webcam.snap(function (data_uri) {
-        document.getElementById("result").innerHTML = '<img id="image_captured" src="' + data_uri + '"/>';
-    });
-};
+function setup() {
+    canvas = createCanvas(600, 530);
+    canvas.center();
 
-console.log("ml5 Version: ", ml5.version);
-classifier = ml5.imageClassifier('https://teachablemachine.withgoogle.com/models/ged4622vy/model.json', modelLoaded);
+    video = createCapture(VIDEO);
+    video.hide();
 
-        function modelLoaded() {
-            console.log("Model Loaded Successfully!");
-        };
+    poseNet = ml5.poseNet(video, modelLoaded);
+    poseNet.on('pose', gotposes);
+}
 
-        function check() {
-            img = document.getElementById("image_captured");
-            classifier.classify(img, gotResults);
+function preload() {
+    Peter_pan_song = loadSound("music2.mp3");
+    Harry_potter_theme_song = loadSound("music.mp3");
+}
+
+function draw() {
+    image(video, 0, 0, 600, 530);
+    fill("blue");
+    stroke("black");
+    song1_status = Peter_pan_song.isPlaying();
+    if (score_left_wrist > 0.2) {
+        circle(leftWrist_x, leftWrist_y, 20);
+        Harry_potter_theme_song.stop();
+        if (song1_status == false) {
+            Peter_pan_song.play();
+            document.getElementById("song").innerHTML = "Playing - Peter Pan Theme Song";
         }
+    }
+}
 
-        function gotResults(error, results) {
-            if (error) {
-                console.log(error);
-            } else {
-                console.log(results);
-                document.getElementById("result_of_objects").innerHTML = results[0].label;
-                document.getElementById("result_of_accuracy").innerHTML = results[0].confidence.toFixed(3);
-            }
-        }
+function modelLoaded() {
+    console.log("poseNet Is Initialized");
+}
+
+function gotposes(results) {
+    if (results.length > 0) {
+        console.log(results);
+        score_left_wrist = results[0].pose.keypoints[9].score;
+        console.log(score_left_wrist)
+
+        leftWrist_x = results[0].pose.leftWrist.x;
+        leftWrist_y = results[0].pose.leftWrist.y;
+        console.log("leftWrist_x = " + leftWrist_x + " leftWrist_y = " + leftWrist_y);
+
+        rightWrist_x = results[0].pose.rightWrist.x;
+        rightWrist_y = results[0].pose.rightWrist.y;
+        console.log("rightWrist_x = " + rightWrist_x + " rightWrist_y = " + rightWrist_y);
+    }
+}

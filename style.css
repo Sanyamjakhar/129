@@ -1,20 +1,21 @@
-body {
-    color: white;
-    background: pink;
+body{
+    background-size: cover;
 }
-
-h3 {
-    width: 80%;
-    font-size: 22px;
+.heading{
+    width: 100%;
+    margin: 0;
+    font-size: 20px;
 }
-
-#camera {
-    border: 2px dashed black;
-    width: 350px;
-    height: 300px;
+.note{
+    color: black;
+    font-size: 15px;
 }
-
-#result_of_objects,
-#result_of_accuracy {
-    color: yellow;
+.song_name{
+    font-size: 20px;
+}
+canvas{
+    background-color: #000000;
+    border: 5px solid white;
+    border-radius: 20px;
+    box-shadow: 5px 5px 5px #73cfd8;
 }
